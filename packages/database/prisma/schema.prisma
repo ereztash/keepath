@@ -1,0 +1,255 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Core Models
+
+model User {
+  id             String         @id @default(cuid())
+  email          String         @unique
+  name           String
+  role           UserRole       @default(USER)
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  missions       Mission[]
+  weeklyCheckIns WeeklyCheckIn[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([organizationId])
+  @@index([email])
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  VIEWER
+}
+
+model Organization {
+  id                String              @id @default(cuid())
+  name              String
+  settings          Json                @default("{}")
+  users             User[]
+  missions          Mission[]
+  offers            Offer[]
+  teamMembers       TeamMember[]
+  marketingChannels MarketingChannel[]
+  sales             Sale[]
+  processes         Process[]
+  weeklyCheckIns    WeeklyCheckIn[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@index([name])
+}
+
+model Mission {
+  id             String        @id @default(cuid())
+  title          String
+  description    String        @db.Text
+  type           MissionType
+  department     Department
+  duration       Int           // in days
+  xpReward       Int
+  priority       Priority      @default(MEDIUM)
+  status         MissionStatus @default(PENDING)
+  subtasks       Json          @default("[]") // Array of {id, title, completed}
+  assignedToId   String?
+  assignedTo     User?         @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([department])
+}
+
+enum MissionType {
+  QUICK_WIN
+  WEEKLY_CHALLENGE
+  MILESTONE
+  NINETY_DAY_GOAL
+}
+
+enum Department {
+  FINANCE
+  MARKETING
+  SALES
+  PRODUCT
+  OPERATIONS
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum MissionStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Offer {
+  id             String       @id @default(cuid())
+  name           String
+  description    String       @db.Text
+  price          Float
+  deliveryCost   Float
+  profitMargin   Float        // calculated: ((price - deliveryCost) / price) * 100
+  profitPerSale  Float        // calculated: price - deliveryCost
+  isMain         Boolean      @default(false)
+  status         OfferStatus  @default(ACTIVE)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sales          Sale[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+}
+
+enum OfferStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+model TeamMember {
+  id             String       @id @default(cuid())
+  name           String
+  role           String
+  department     Department
+  monthlyCost    Float
+  kpiMetric      String
+  kpiTarget      Float
+  currentKpi     Float        @default(0)
+  performance    Float        @default(100) // percentage
+  capacity       Float        @default(100) // percentage
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sales          Sale[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([department])
+}
+
+model MarketingChannel {
+  id             String        @id @default(cuid())
+  source         String
+  funnelStage    FunnelStage
+  visitors       Int
+  leads          Int
+  convRate       Float         // calculated: (leads / visitors) * 100
+  monthlySpend   Float
+  costPerLead    Float         // calculated: monthlySpend / leads
+  status         ChannelStatus @default(ACTIVE)
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([funnelStage])
+}
+
+enum FunnelStage {
+  AWARENESS
+  CONSIDERATION
+  CONVERSION
+  RETENTION
+}
+
+enum ChannelStatus {
+  ACTIVE
+  PAUSED
+  TESTING
+}
+
+model Sale {
+  id             String       @id @default(cuid())
+  clientName     String
+  offerId        String
+  offer          Offer        @relation(fields: [offerId], references: [id], onDelete: Restrict)
+  amount         Float
+  soldById       String
+  soldBy         TeamMember   @relation(fields: [soldById], references: [id], onDelete: Restrict)
+  date           DateTime     @default(now())
+  status         SaleStatus   @default(PENDING)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([offerId])
+  @@index([soldById])
+  @@index([status])
+  @@index([date])
+}
+
+enum SaleStatus {
+  PENDING
+  CLOSED
+  LOST
+}
+
+model Process {
+  id             String        @id @default(cuid())
+  name           String
+  description    String        @db.Text
+  department     Department
+  timeSaved      Int           // hours per month
+  automatable    Boolean       @default(false)
+  status         ProcessStatus @default(IDENTIFIED)
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+  @@index([department])
+  @@index([status])
+}
+
+enum ProcessStatus {
+  IDENTIFIED
+  IN_PROGRESS
+  AUTOMATED
+}
+
+model WeeklyCheckIn {
+  id             String       @id @default(cuid())
+  week           DateTime
+  snapshot       Json         // {leads, sales, revenue, profit, hours, mood}
+  goals          Json         @default("[]") // Array of strings
+  wins           Json         @default("[]") // Array of strings
+  blockers       Json         @default("[]") // Array of strings
+  learnings      Json         @default("[]") // Array of strings
+  why            String       @db.Text
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([week])
+}
