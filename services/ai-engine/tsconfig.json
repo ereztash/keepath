@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "module": "CommonJS",
+    "target": "ES2021",
+    "esModuleInterop": true,
+    "paths": {
+      "@keepath/config": ["../../packages/config"],
+      "@keepath/database": ["../../packages/database"],
+      "@keepath/types": ["../../packages/types"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
