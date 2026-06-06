@@ -1,0 +1,39 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "declaration": false,
+    "declarationMap": false,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@keepath/shared-ui": [
+        "../../packages/shared-ui"
+      ],
+      "@keepath/database": [
+        "../../packages/database"
+      ],
+      "@keepath/types": [
+        "../../packages/types"
+      ],
+      "@keepath/config": [
+        "../../packages/config"
+      ]
+    },
+    "allowJs": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

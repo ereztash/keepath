@@ -1,277 +1,269 @@
-# Keepath - Modular Business Management System
+# 🧭 Keepath
 
-A comprehensive modular monorepo with 4 specialized business applications: Finance, Marketing, Sales, and Product.
+**Stay on the path that actually matters to you.**
 
-## 🏗️ Architecture
-
-```
-keepath/
-├── apps/
-│   ├── finance/       # Financial management (port 3001)
-│   ├── marketing/     # Marketing channels & analytics (port 3002)
-│   ├── sales/         # Sales pipeline & tracking (port 3003)
-│   └── product/       # Missions, goals & AI coach (port 3004)
-├── packages/
-│   ├── api-client/    # API client & services
-│   ├── config/        # Shared configuration
-│   ├── database/      # Prisma schema & client
-│   ├── shared-ui/     # Shared UI components (shadcn/ui)
-│   └── types/         # TypeScript types
-└── services/
-    ├── api/           # NestJS REST API (port 4000)
-    └── ai-engine/     # AI/LLM integration service (port 4001)
-```
-
-## 🚀 Tech Stack
-
-- **Frontend**: Next.js 14 (App Router), React 18, TypeScript
-- **Backend**: NestJS, Express
-- **AI**: OpenAI GPT-4, Anthropic Claude
-- **Styling**: Tailwind CSS, shadcn/ui
-- **State Management**: Zustand, React Query
-- **Database**: PostgreSQL + Prisma ORM
-- **Monorepo**: Turborepo
-- **Charts**: Recharts
-- **Icons**: Lucide React
-- **Testing**: Jest, Supertest
-- **CI/CD**: GitHub Actions
-
-## 📦 Applications
-
-### 1. Finance App (Port 3001)
-- Dashboard with revenue, profit, expenses, runway
-- Offers management with profit calculations
-- Budget tracker by category
-- **Features**: Real-time profit margin calculations, expense tracking
-
-### 2. Marketing App (Port 3002)
-- Channels dashboard with CPL and conversion metrics
-- Marketing funnel visualization
-- Channel performance analytics
-- **Features**: Auto-calculated conversion rates and CPL
-
-### 3. Sales App (Port 3003)
-- Sales dashboard with key metrics
-- Pipeline management
-- Team leaderboard
-- **Features**: Win rate tracking, deal size analytics
-
-### 4. Product App (Port 3004)
-- Gamified missions system with XP rewards
-- Weekly goal planner with 5-tab workflow
-- AI Coach (Jules) - Powered by Claude/GPT-4
-- **Features**: Mission types (Quick Win, Weekly Challenge, Milestone, 90-Day Goal)
-
-## 🔌 Services
-
-### API Service (Port 4000)
-- **NestJS REST API** with full CRUD operations
-- **Swagger Documentation** at `/api`
-- **Modules**: Finance, Marketing, Sales, Missions, Team
-- **Features**: Rate limiting, validation, error handling
-
-### AI Engine (Port 4001)
-- **Jules AI Coach** - Context-aware business advisor
-- **Mission Suggestions** - AI-generated tasks based on data
-- **Metrics Analysis** - Intelligent insights
-- **Streaming Chat** - Real-time AI responses
-
-## 🛠️ Getting Started
-
-### Prerequisites
-
-- Node.js 18+ and npm
-- PostgreSQL database
-- Git
-
-### Installation
-
-1. **Clone the repository**
-```bash
-git clone <your-repo-url>
-cd keepath
-```
-
-2. **Install dependencies**
-```bash
-npm install
-```
-
-3. **Setup Database**
-
-Create a PostgreSQL database:
-```bash
-createdb keepath
-```
-
-Copy the environment file:
-```bash
-cp packages/database/.env.example packages/database/.env
-```
-
-Update `packages/database/.env` with your database URL:
-```
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/keepath?schema=public"
-```
-
-4. **Run Prisma migrations**
-```bash
-npm run db:migrate
-npm run db:generate
-```
-
-5. **Seed database with demo data**
-```bash
-npm run db:seed
-```
-
-6. **Start all services**
-
-Start frontend apps:
-```bash
-npm run dev:apps
-```
-
-Start API (in separate terminal):
-```bash
-npm run dev:api
-```
-
-Start AI Engine (in separate terminal, optional):
-```bash
-npm run dev:ai
-```
-
-**OR** start everything at once:
-```bash
-npm run dev
-```
-
-This will start:
-- Finance: http://localhost:3001
-- Marketing: http://localhost:3002
-- Sales: http://localhost:3003
-- Product: http://localhost:3004
-- API: http://localhost:4000 (Swagger: http://localhost:4000/api)
-- AI Engine: http://localhost:4001
-
-## 📝 Available Scripts
-
-**Development:**
-- `npm run dev` - Start all apps in development mode
-- `npm run dev:apps` - Start only frontend apps
-- `npm run dev:api` - Start API service
-- `npm run dev:ai` - Start AI engine
-
-**Build & Test:**
-- `npm run build` - Build all apps for production
-- `npm run test` - Run all tests
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:coverage` - Generate test coverage report
-- `npm run lint` - Lint all apps
-- `npm run format` - Format code with Prettier
-
-**Database:**
-- `npm run db:migrate` - Run Prisma migrations
-- `npm run db:generate` - Generate Prisma Client
-- `npm run db:seed` - Seed database with demo data
-- `npm run db:reset` - Reset database (WARNING: deletes all data)
-- `npm run db:studio` - Open Prisma Studio GUI
-- `npm run db:push` - Push schema changes without migrations
-
-**Docker:**
-- `npm run docker:up` - Start PostgreSQL & Redis containers
-- `npm run docker:down` - Stop containers
-
-**Utilities:**
-- `npm run clean` - Clean all node_modules and build outputs
-
-## 🗄️ Database Schema
-
-The system uses a multi-tenant architecture with the following models:
-
-- **User** - User accounts with role-based access
-- **Organization** - Multi-tenant support
-- **Mission** - Gamified tasks with XP rewards
-- **Offer** - Products/services with profit calculations
-- **TeamMember** - Team members with KPI tracking
-- **MarketingChannel** - Marketing channels with metrics
-- **Sale** - Sales records with status tracking
-- **Process** - Business processes
-- **WeeklyCheckIn** - Weekly reflections and goals
-
-## 🎨 UI Components
-
-The shared UI library includes:
-
-- **StatCard** - Metric cards with trend indicators
-- **StatusBadge** - Status badges with variants
-- **EmptyState** - Empty state placeholders
-- **Button, Card** - Base shadcn/ui components
-- **Utility functions** - Currency, number, percentage formatters
-
-## 🔐 Environment Variables
-
-Create a `.env.local` file in each app directory for app-specific variables:
-
-```env
-# Database
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/keepath"
-
-# API
-NEXT_PUBLIC_API_URL="http://localhost:4000"
-
-# AI (for Product app)
-OPENAI_API_KEY="your-key-here"
-ANTHROPIC_API_KEY="your-key-here"
-```
-
-## ✅ What's Included
-
-- [x] **Turborepo monorepo** setup
-- [x] **Prisma database schema** with 8 models
-- [x] **Shared UI component library** with shadcn/ui
-- [x] **4 Next.js apps**: Finance, Marketing, Sales, Product
-- [x] **NestJS REST API** with Swagger docs
-- [x] **AI Engine** with OpenAI/Anthropic integration
-- [x] **Jules AI Coach** - Context-aware business advisor
-- [x] **API Client package** with services for all endpoints
-- [x] **Event Bus** for cross-app communication
-- [x] **Aggregation service** with caching
-- [x] **Testing infrastructure** (Jest + Supertest)
-- [x] **CI/CD pipeline** (GitHub Actions)
-- [x] **Database seed script** with demo data
-- [x] **Docker Compose** for local development
-- [x] **Comprehensive documentation**
-
-## 🚧 Future Enhancements
-
-- [ ] Authentication & authorization (NextAuth.js)
-- [ ] Multi-tenancy & user management
-- [ ] Real-time updates with WebSockets
-- [ ] E2E testing with Playwright
-- [ ] Performance monitoring & analytics
-- [ ] Advanced AI features (document analysis, forecasting)
-- [ ] Mobile apps (React Native)
-- [ ] Third-party integrations (Stripe, Slack, etc.)
-
-## 🤝 Contributing
-
-This is a modular system designed for easy extension. Each app is independent but shares common packages.
-
-To add a new app:
-1. Create a new Next.js app in `apps/`
-2. Add it to the workspace in root `package.json`
-3. Import shared packages as needed
-
-## 📄 License
-
-MIT
-
-## 🆘 Support
-
-For questions or issues, please open a GitHub issue.
+> A personal time alignment coach that reads your Google Calendar, learns what you say matters most, and shows you if you're actually investing your time there. No productivity hype. Just honest mirrors.
 
 ---
 
-Built with ❤️ using modern web technologies
+## 🎯 The Idea
+
+1. **Connect Google Calendar** — read-only access
+2. **Define your values** — what actually matters (Family, Deep Work, Health, etc.)
+3. **Set weekly intentions** — how many hours you intend to invest in each
+4. **See your alignment** — calendar events auto-categorized by AI, compared against intentions
+5. **Talk to Jules** — an honest AI coach who notices the gaps
+6. **Reflect weekly** — capture wins, blockers, learnings
+
+**The result:** A weekly alignment score (0-100) that answers: "Did I actually spend time on what I said matters?"
+
+---
+
+## 🏗️ Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | Next.js 14, React 18, TypeScript, Tailwind CSS |
+| **Backend** | Next.js API Routes (same deployment) |
+| **Database** | PostgreSQL + Prisma ORM |
+| **Auth** | NextAuth v5 + Google OAuth |
+| **AI** | Anthropic Claude Sonnet 4.6 |
+| **State** | React Query + Zustand |
+| **Monorepo** | Turborepo + npm workspaces |
+| **Deploy** | Vercel (single click) |
+
+---
+
+## 🚀 Quick Start
+
+### 1. Local Setup (5 minutes)
+
+```bash
+git clone https://github.com/ereztash/keepath.git
+cd keepath
+npm install
+
+# Start Postgres (Docker) or use local database
+npm run docker:up
+
+# Setup database
+npm run db:generate
+npm run db:migrate
+npm run db:seed  # Optional: demo data
+
+# Run dev server
+npm run dev
+```
+
+**Visit:** `http://localhost:3000`
+
+### 2. Configure Credentials
+
+Create `apps/web/.env.local`:
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/keepath?schema=public"
+AUTH_SECRET="$(openssl rand -base64 32)"
+NEXTAUTH_URL="http://localhost:3000"
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+ANTHROPIC_API_KEY=""
+```
+
+👉 See [docs/he/SETUP.md](docs/he/SETUP.md) for detailed Google OAuth setup.
+
+### 3. Test the Flow
+
+```
+✓ Sign in → Onboarding → Intentions → Dashboard → Sync → AI Categorize → Result
+```
+
+👉 See [docs/he/FEATURES.md](docs/he/FEATURES.md) for feature walkthrough.
+
+---
+
+## 📦 Project Structure
+
+```
+keepath/
+├── apps/web/                    # Single Next.js app
+│   ├── src/app/                 # Pages + API routes
+│   │   ├── (app)/               # Protected routes
+│   │   │   ├── dashboard/       # Alignment score
+│   │   │   ├── intentions/      # Weekly planning
+│   │   │   ├── calendar/        # Event view
+│   │   │   ├── missions/        # Todo list
+│   │   │   ├── coach/           # Jules AI chat
+│   │   │   └── reflect/         # Friday check-in
+│   │   ├── api/                 # REST endpoints
+│   │   ├── signin/              # Google OAuth
+│   │   └── onboarding/          # Value selection
+│   ├── src/lib/                 # Business logic
+│   │   ├── auth.ts              # NextAuth config
+│   │   ├── google-calendar.ts   # Calendar sync
+│   │   ├── categorize.ts        # Claude AI
+│   │   └── alignment.ts         # Score calculation
+│   └── e2e/                     # Playwright tests
+│
+├── packages/
+│   ├── database/                # Prisma ORM
+│   │   └── prisma/schema.prisma # 9 models
+│   ├── types/                   # TypeScript interfaces
+│   ├── shared-ui/               # Reusable components
+│   └── config/                  # Shared config
+│
+├── docs/he/                     # Hebrew documentation
+│   ├── SETUP.md                 # Install & config
+│   ├── FEATURES.md              # Feature guide
+│   └── ARCHITECTURE.md          # Technical deep-dive
+│
+├── DEPLOY.md                    # Production guide
+└── README.md                    # This file
+```
+
+👉 See [docs/he/ARCHITECTURE.md](docs/he/ARCHITECTURE.md) for detailed tech breakdown.
+
+---
+
+## 📊 Project Status
+
+### ✅ Complete (MVP Ready)
+
+- [x] **Auth:** NextAuth + Google OAuth with Calendar scopes
+- [x] **Database:** Prisma schema with 9 models (User, Value, CalendarEvent, etc.)
+- [x] **Frontend:** 6 full-featured pages + responsive UI
+- [x] **API:** 15+ REST endpoints
+- [x] **AI:** Claude integration for event categorization + Jules coach
+- [x] **Build:** Next.js production build passes
+- [x] **Tests:** Playwright E2E framework (demo flow spec)
+- [x] **CI/CD:** GitHub Actions with build + test pipeline
+- [x] **Docs:** Hebrew setup, features, architecture guides
+
+### ⏳ Blocked by You
+
+- [ ] **Google OAuth:** Needs your Google Cloud credentials (free tier ok)
+- [ ] **Database:** Needs production DB (Neon/Vercel/Supabase free tier)
+- [ ] **Anthropic:** Needs your API key (you said you have this)
+- [ ] **Deployment:** Ready for Vercel (you have account?)
+
+### 🚀 Next Steps
+
+1. **Setup credentials** → Google OAuth + env vars
+2. **Deploy to Vercel** → See [DEPLOY.md](DEPLOY.md)
+3. **Test investor demo** → Full happy path
+4. **Iterate** → Gather feedback, push to main → auto-deploys
+
+---
+
+## 🛣️ Roadmap
+
+### Demo Ready (This Week?)
+- [ ] ✅ Google OAuth working
+- [ ] ✅ Database migrated
+- [ ] ✅ Deployed to Vercel
+- [ ] ✅ Full flow tested
+
+### Production Ready (Next Month?)
+- [ ] Multi-user test (10-20 people)
+- [ ] Mobile responsiveness verified
+- [ ] Error handling robustness
+- [ ] Performance monitoring
+- [ ] Analytics (see if users actually use it)
+
+### Long-term Ideas
+- [ ] Multi-user sharing (see others' alignment)
+- [ ] Slack integration (weekly digest)
+- [ ] Mobile app (React Native)
+- [ ] Advanced analytics (trends over time)
+- [ ] Recurring missions (weekly automation)
+
+---
+
+## 📖 Documentation
+
+**For you (in Hebrew):**
+- 🇮🇱 [SETUP.md](docs/he/SETUP.md) — Step-by-step installation
+- 🇮🇱 [FEATURES.md](docs/he/FEATURES.md) — What each page does
+- 🇮🇱 [ARCHITECTURE.md](docs/he/ARCHITECTURE.md) — How it works under the hood
+
+**For deployment:**
+- 📦 [DEPLOY.md](DEPLOY.md) — Production guide (Vercel, databases, env vars)
+
+**In English (main README):**
+- 📄 This file (overview + tech stack)
+
+---
+
+## 🔐 Security & Privacy
+
+- **Auth:** NextAuth handles JWTs, Google OAuth is industry-standard
+- **Data:** Only your email + calendar event titles stored
+- **API:** All endpoints require authentication
+- **AI:** Claude never sees your email, only event titles + value names
+- **Database:** Credentials in `.env` (never committed)
+
+---
+
+## 🧪 Testing
+
+### E2E Tests
+```bash
+cd apps/web
+npm run test:e2e          # Run headless
+npm run test:e2e:headed   # Visual mode
+npm run test:e2e:ui       # Interactive UI
+```
+
+### Local Development
+```bash
+npm run dev          # Start dev server
+npm run lint         # Check code
+npm run format       # Format code
+npm run db:studio    # Visual database browser
+```
+
+---
+
+## 💬 The Pitch (For Investors)
+
+**Problem:** People say "family matters" but spend 0 hours with family. They say "deep work" but context-switch all day. No tool shows this gap.
+
+**Solution:** Keepath connects to your calendar, asks what matters, and shows you—weekly—if you're lying to yourself.
+
+**Why now:** 
+- Gen-Z & millennial guilt about time management (post-remote-work chaos)
+- AI makes real-time categorization possible (no manual logging)
+- Google Calendar is ubiquitous (network effect)
+
+**Why we'll win:**
+- Not another productivity app (we're anti-productivity)
+- Honest (no motivation, just mirrors)
+- Data-driven (calendar is truth)
+- Habit-forming (weekly score gamification)
+
+**Use case:** Manager at tech company realizes they're managing instead of coding → aligns time → gets 4h/week back for deep work.
+
+---
+
+## 📧 Support
+
+**Questions?**
+- Check [docs/he/SETUP.md](docs/he/SETUP.md) for installation
+- Check [docs/he/FEATURES.md](docs/he/FEATURES.md) for feature questions
+- Check [docs/he/ARCHITECTURE.md](docs/he/ARCHITECTURE.md) for technical questions
+
+**Found a bug?**
+- Open an issue on GitHub
+- Run `npm run test:e2e` to verify
+
+---
+
+## 📄 License
+
+MIT — Build on it, learn from it, improve it.
+
+---
+
+**Built with ❤️ by Erez**
+
+*"The best time to plant a tree was 20 years ago. The second best time is this week."*
