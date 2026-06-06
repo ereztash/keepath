@@ -1,0 +1,42 @@
+{
+  "name": "@keepath/web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.27.0",
+    "@auth/prisma-adapter": "^2.7.0",
+    "@keepath/config": "*",
+    "@keepath/database": "*",
+    "@keepath/shared-ui": "*",
+    "@keepath/types": "*",
+    "@tanstack/react-query": "^5.14.2",
+    "date-fns": "^3.6.0",
+    "googleapis": "^144.0.0",
+    "lucide-react": "^0.294.0",
+    "next": "14.2.5",
+    "next-auth": "5.0.0-beta.20",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.10.3",
+    "sonner": "^1.5.0",
+    "zod": "^3.22.4",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5"
+  }
+}

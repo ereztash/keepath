@@ -1,45 +1,113 @@
-// User & Auth Types
+// User
 export interface User {
   id: string;
   email: string;
-  name: string;
-  role: UserRole;
-  organizationId: string;
+  name: string | null;
+  image: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  USER = 'USER',
-  VIEWER = 'VIEWER',
-}
-
-// Organization
-export interface Organization {
+// Value (life area)
+export interface Value {
   id: string;
+  userId: string;
   name: string;
-  settings: Record<string, any>;
+  description: string | null;
+  color: string;
+  icon: string;
+  sortOrder: number;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-// Mission Types
+// Intentions
+export interface WeeklyIntention {
+  id: string;
+  userId: string;
+  valueId: string;
+  weekStart: Date;
+  targetHours: number;
+  notes: string | null;
+  value?: Value;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Calendar
+export interface CalendarEvent {
+  id: string;
+  userId: string;
+  googleEventId: string;
+  calendarId: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  startTime: Date;
+  endTime: Date;
+  durationMinutes: number;
+  isAllDay: boolean;
+  status: string;
+  syncedAt: Date;
+  categorizations?: EventCategorization[];
+}
+
+export interface EventCategorization {
+  id: string;
+  eventId: string;
+  valueId: string;
+  confidence: number;
+  reasoning: string | null;
+  isManual: boolean;
+  value?: Value;
+  createdAt: Date;
+}
+
+// Alignment
+export interface AlignmentBreakdown {
+  valueId: string;
+  valueName: string;
+  valueColor: string;
+  targetHours: number;
+  actualHours: number;
+  score: number; // 0-100
+}
+
+export interface AlignmentScore {
+  id: string;
+  userId: string;
+  weekStart: Date;
+  overallScore: number;
+  breakdown: AlignmentBreakdown[];
+  totalActualHours: number;
+  totalTargetHours: number;
+  computedAt: Date;
+}
+
+// Missions
 export interface Mission {
   id: string;
+  userId: string;
   title: string;
-  description: string;
+  description: string | null;
   type: MissionType;
-  department: Department;
-  duration: number; // in days
-  xpReward: number;
-  priority: Priority;
   status: MissionStatus;
+  priority: Priority;
+  xpReward: number;
+  dueDate: Date | null;
+  completedAt: Date | null;
   subtasks: Subtask[];
-  assignedToId?: string;
-  organizationId: string;
+  valueId: string | null;
+  value?: Value;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface Subtask {
+  id: string;
+  title: string;
+  completed: boolean;
 }
 
 export enum MissionType {
@@ -49,12 +117,11 @@ export enum MissionType {
   NINETY_DAY_GOAL = 'NINETY_DAY_GOAL',
 }
 
-export enum Department {
-  FINANCE = 'FINANCE',
-  MARKETING = 'MARKETING',
-  SALES = 'SALES',
-  PRODUCT = 'PRODUCT',
-  OPERATIONS = 'OPERATIONS',
+export enum MissionStatus {
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
 }
 
 export enum Priority {
@@ -64,173 +131,70 @@ export enum Priority {
   URGENT = 'URGENT',
 }
 
-export enum MissionStatus {
-  PENDING = 'PENDING',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-}
-
-export interface Subtask {
-  id: string;
-  title: string;
-  completed: boolean;
-}
-
-// Offer Types
-export interface Offer {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  deliveryCost: number;
-  profitMargin: number; // calculated
-  profitPerSale: number; // calculated
-  isMain: boolean;
-  status: OfferStatus;
-  organizationId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export enum OfferStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  ARCHIVED = 'ARCHIVED',
-}
-
-// Team Member Types
-export interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  department: Department;
-  monthlyCost: number;
-  kpiMetric: string;
-  kpiTarget: number;
-  currentKpi: number;
-  performance: number; // percentage
-  capacity: number; // percentage
-  organizationId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Marketing Channel Types
-export interface MarketingChannel {
-  id: string;
-  source: string;
-  funnelStage: FunnelStage;
-  visitors: number;
-  leads: number;
-  convRate: number; // calculated
-  monthlySpend: number;
-  costPerLead: number; // calculated
-  status: ChannelStatus;
-  organizationId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export enum FunnelStage {
-  AWARENESS = 'AWARENESS',
-  CONSIDERATION = 'CONSIDERATION',
-  CONVERSION = 'CONVERSION',
-  RETENTION = 'RETENTION',
-}
-
-export enum ChannelStatus {
-  ACTIVE = 'ACTIVE',
-  PAUSED = 'PAUSED',
-  TESTING = 'TESTING',
-}
-
-// Sale Types
-export interface Sale {
-  id: string;
-  clientName: string;
-  offerId: string;
-  amount: number;
-  soldById: string;
-  date: Date;
-  status: SaleStatus;
-  organizationId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export enum SaleStatus {
-  PENDING = 'PENDING',
-  CLOSED = 'CLOSED',
-  LOST = 'LOST',
-}
-
-// Process Types
-export interface Process {
-  id: string;
-  name: string;
-  description: string;
-  department: Department;
-  timeSaved: number; // hours per month
-  automatable: boolean;
-  status: ProcessStatus;
-  organizationId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export enum ProcessStatus {
-  IDENTIFIED = 'IDENTIFIED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  AUTOMATED = 'AUTOMATED',
-}
-
-// Goal & Reflection Types
+// Weekly Check-In
 export interface WeeklyCheckIn {
   id: string;
-  week: Date;
-  snapshot: {
-    leads: number;
-    sales: number;
-    revenue: number;
-    profit: number;
-    hours: number;
-    mood: number; // 1-10
-  };
-  goals: string[];
+  userId: string;
+  weekStart: Date;
+  mood: number;
   wins: string[];
   blockers: string[];
   learnings: string[];
-  why: string;
+  reflection: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Conversations
+export interface Conversation {
+  id: string;
   userId: string;
-  organizationId: string;
+  title: string | null;
+  messages?: Message[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Message {
+  id: string;
+  conversationId: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
   createdAt: Date;
 }
 
-// Analytics Types
-export interface DashboardMetrics {
-  finance: {
-    revenue: number;
-    profit: number;
-    expenses: number;
-    burnRate: number;
-    runway: number; // months
-  };
-  marketing: {
-    totalLeads: number;
-    totalSpend: number;
-    avgCPL: number;
-    bestChannel: string;
-  };
-  sales: {
-    totalSales: number;
-    avgDealSize: number;
-    winRate: number;
-    topSeller: string;
-  };
-  team: {
-    totalMembers: number;
-    totalCost: number;
-    avgPerformance: number;
-  };
+// Dashboard
+export interface DashboardData {
+  weekStart: Date;
+  alignmentScore: AlignmentScore | null;
+  intentions: WeeklyIntention[];
+  events: CalendarEvent[];
+  uncategorizedCount: number;
 }
+
+// Suggested icons for values
+export const VALUE_ICONS = [
+  'Target',
+  'Heart',
+  'Briefcase',
+  'BookOpen',
+  'Dumbbell',
+  'Users',
+  'Sparkles',
+  'Brain',
+  'Home',
+  'Palette',
+  'Music',
+  'Globe',
+] as const;
+
+export const VALUE_COLORS = [
+  '#6366f1', // indigo
+  '#ec4899', // pink
+  '#f59e0b', // amber
+  '#10b981', // emerald
+  '#06b6d4', // cyan
+  '#8b5cf6', // violet
+  '#ef4444', // red
+  '#84cc16', // lime
+] as const;
