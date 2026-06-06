@@ -27,57 +27,7 @@ jobs:
           ANTHROPIC_API_KEY: build-time-placeholder
           NEXTAUTH_URL: http://localhost:3000
 
-  e2e:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: keepath_e2e
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
+  # E2E tests are deferred until proper Google OAuth mocking is in place.
+  # The Playwright config and demo-flow spec live in apps/web/ for local use:
+  #   cd apps/web && npm run test:e2e:headed
 
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - run: npm ci
-      - run: npm run db:generate
-      
-      - name: Setup E2E database
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/keepath_e2e
-        run: npm run db:migrate
-      
-      - name: Install Playwright
-        run: npx playwright install --with-deps
-      
-      - name: Run E2E tests
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/keepath_e2e
-          AUTH_SECRET: test-secret-do-not-use
-          GOOGLE_CLIENT_ID: test-id
-          GOOGLE_CLIENT_SECRET: test-secret
-          ANTHROPIC_API_KEY: test-key
-          NEXTAUTH_URL: http://localhost:3000
-        run: npm run test:e2e
-        working-directory: apps/web
-      
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-report
-          path: apps/web/playwright-report/
-          retention-days: 7
