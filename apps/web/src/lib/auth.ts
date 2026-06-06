@@ -1,41 +1,11 @@
-import NextAuth, { type NextAuthConfig } from 'next-auth';
-import Google from 'next-auth/providers/google';
+import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@keepath/database';
+import { authConfig, GOOGLE_SCOPES } from './auth.config';
 
-const GOOGLE_SCOPES = [
-  'openid',
-  'email',
-  'profile',
-  'https://www.googleapis.com/auth/calendar.readonly',
-  'https://www.googleapis.com/auth/calendar.events.readonly',
-].join(' ');
-
-const authConfig: NextAuthConfig = {
+const nextAuth = NextAuth({
+  ...authConfig,
   adapter: PrismaAdapter(prisma),
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          scope: GOOGLE_SCOPES,
-          access_type: 'offline',
-          prompt: 'consent',
-        },
-      },
-    }),
-  ],
-  session: { strategy: 'database' },
-  pages: { signIn: '/signin' },
-  callbacks: {
-    async session({ session, user }) {
-      if (session.user) {
-        (session.user as { id: string }).id = user.id;
-      }
-      return session;
-    },
-  },
   events: {
     async linkAccount({ user, account }) {
       if (account.provider !== 'google') return;
@@ -63,9 +33,7 @@ const authConfig: NextAuthConfig = {
       });
     },
   },
-};
-
-const nextAuth = NextAuth(authConfig);
+});
 
 export const handlers = nextAuth.handlers;
 export const auth = nextAuth.auth;

@@ -20,6 +20,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   });
   if (!event) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
+  const ownedValue = await prisma.value.findFirst({
+    where: { id: parsed.data.valueId, userId: session.user.id },
+    select: { id: true },
+  });
+  if (!ownedValue) return NextResponse.json({ error: 'Value not found' }, { status: 404 });
+
   await prisma.eventCategorization.deleteMany({ where: { eventId: event.id } });
   await prisma.eventCategorization.create({
     data: {

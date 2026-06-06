@@ -34,6 +34,12 @@ export async function POST(req: Request) {
   const parsed = upsertSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
+  const owned = await prisma.value.findFirst({
+    where: { id: parsed.data.valueId, userId: session.user.id },
+    select: { id: true },
+  });
+  if (!owned) return NextResponse.json({ error: 'Value not found' }, { status: 404 });
+
   const week = weekStart(new Date(parsed.data.weekStart));
 
   const intention = await prisma.weeklyIntention.upsert({

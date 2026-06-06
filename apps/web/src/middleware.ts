@@ -1,5 +1,9 @@
-import { auth } from '@/lib/auth';
+import NextAuth from 'next-auth';
 import { NextResponse } from 'next/server';
+import { authConfig } from '@/lib/auth.config';
+
+// Edge-safe auth: uses only auth.config (no Prisma).
+const { auth } = NextAuth(authConfig);
 
 const PUBLIC = ['/signin', '/api/auth'];
 
